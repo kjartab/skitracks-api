@@ -1,10 +1,11 @@
 var dotenv = require('dotenv')
 const envs = dotenv.config()
-
+var cors = require('cors')
 const express = require('express')
 const apiRouter = require('./apiRouter')
-const app = express()
+var app = express()
+app.use(cors())
 
-app.use('/', apiRouter)
+app.use('/api', apiRouter)
 
 app.listen(3000)
