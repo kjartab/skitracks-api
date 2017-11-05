@@ -1,23 +1,6 @@
 const { Pool } = require('pg')
 const pool = new Pool()
 
-const geojsonFcSql = `
-    SELECT row_to_json(feature_collection)
-    FROM ( SELECT 'FeatureCollection' AS type, 
-        array_to_json(array_agg(feature)) As features
-        FROM (	
-            SELECT 
-                ST_AsGeoJson(ST_Transform(k.segment,4326))::json AS geometry, 
-                sid, 
-                segmentorder, 
-                segmenttime, 
-                length
-            
-            FROM (SELECT segment,segmenttime, ST_Length(segment) length, s.segmentnumber as segmentorder, s.segment_id as sid FROM prebuild_temporalsegment s) k
-            ) AS feature 
-        ) AS feature_collection;
-`
-
 const geojsonFeaturesSql = `
 SELECT  
     ST_AsGeoJson(ST_Transform(segment,4326)) geom,
@@ -29,8 +12,6 @@ SELECT
 FROM 
 prebuild_temporalsegment
 `
-
-
 
 const trackObjectsSql = `
         SELECT
@@ -79,7 +60,6 @@ const getTracks = async () => {
     const res = await pool.query('SELECT * from track_table;')
     return res.rows
 }
-
 
 module.exports = {
     getSpatioTemporal: getSpatioTemporal,
